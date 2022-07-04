@@ -1,0 +1,16 @@
+{
+  "name": "chopper",
+  "version": "1.0.0",
+  "description": "dynamodb memo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^3.19.0",
+    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-offline": "^5.9.0"
+  }
+}

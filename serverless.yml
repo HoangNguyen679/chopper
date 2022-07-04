@@ -1,0 +1,35 @@
+service: chopper
+
+frameworkVersion: '3'
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      heapInitial: 200m
+      heapMax: 1g
+      migrate: true
+      seed: true
+      convertEmptyValues: true
+    seed:
+      dev:
+        sources:
+          - table: books
+            sources: [./books.json]
+
+provider:
+  name: aws
+  endpointType: regional
+  stage: dev
+  region: ap-northeast-1
+  profile: default
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
+resources:
+  - ${file(dynamodb.yaml)}
