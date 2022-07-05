@@ -1,127 +1,105 @@
-require File.dirname(__FILE__) + '/../lib/dynamodb'
+# frozen_string_literal: true
+
+require "#{File.dirname(__FILE__)}/../lib/dynamodb"
 require 'parallel'
 
+# Service to scan all books table
 class BookApi
-  @@client = CustomDynamoDB.client()
-  @@table_name = 'books'
+  TABLE_NAME = 'books'
 
-  def get_books()
-    start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    response = @@client.scan(
-      table_name: @@table_name,
-    )
-    finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    puts('--------------------------------')
-    puts('Scan time:')
-    puts(finish - start)
-    puts('--------------------------------')
-    return response.items
+  def initialize
+    @client = CustomDynamoDB.client
   end
 
-  def get_books_consistent_read()
-    start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    response = @@client.scan(
-      table_name: @@table_name,
-      consistent_read: false,
-    )
-    finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    puts('--------------------------------')
-    puts('Scan time with consistent read:')
-    puts(finish - start)
-    puts('--------------------------------')
-    return response.items
+  def books
+    response = benmark('Scan in: ') do
+      @client.scan(
+        table_name: TABLE_NAME
+      )
+    end
+    response.items
   end
 
-  def get_books_pagination(page_size=100)
-    result = []
-    start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    response = @@client.scan(
-      table_name: @@table_name,
-      limit: page_size
-    )
+  def books_consistent_read
+    response = benmark('Scan with consistent read in: ') do
+      @client.scan(
+        table_name: TABLE_NAME,
+        consistent_read: false
+      )
+    end
+    response.items
+  end
 
-    result.push(*response.items)
+  def books_pagination(page_size = 100)
+    benmark("Scan with page size = #{page_size} in: ") do
+      result = []
 
-    while response.key?('last_evaluated_key') do
-      response = @@client.scan(
-        table_name: @@table_name,
-        limit: page_size,
-        exclusive_start_key: response.last_evaluated_key
+      response = @client.scan(
+        table_name: TABLE_NAME,
+        limit: page_size
       )
 
       result.push(*response.items)
+
+      while response.key?('last_evaluated_key')
+        response = @client.scan(
+          table_name: TABLE_NAME,
+          limit: page_size,
+          exclusive_start_key: response.last_evaluated_key
+        )
+
+        result.push(*response.items)
+      end
+      result
     end
-
-    finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    puts('--------------------------------')
-    puts("Scan time with page size = #{page_size}:")
-    puts(finish - start)
-    puts('--------------------------------')
-    return result
   end
 
-  def get_books_isbn()
-    start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    response = @@client.scan(
-      table_name: @@table_name,
-      projection_expression: 'isbn'
-    )
-    finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    puts('--------------------------------')
-    puts('Scan with only isbn time:')
-    puts(finish - start)
-    puts('--------------------------------')
-    return response.items
+  def books_isbn
+    response = benmark('Scan only isbn in: ') do
+      @client.scan(
+        table_name: TABLE_NAME,
+        projection_expression: 'isbn'
+      )
+    end
+    response.items
   end
 
-  def get_books_with_page_is_larger_than(value=100)
-    start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    response = @@client.scan(
-      table_name: @@table_name,
-      filter_expression: "#page_count >= :value",
-      expression_attribute_names: {
-        '#page_count': 'pageCount'
-      },
-      expression_attribute_values: {
-        ':value': value
-      }
-    )
-    finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    puts('--------------------------------')
-    puts("Scan with page is larger than #{value}:")
-    puts(finish - start)
-    puts('--------------------------------')
-    return response.items
+  def books_with_page_is_larger_than(value = 100)
+    response = benmark("Scan with page is larger than #{value} in: ") do
+      @client.scan(
+        table_name: TABLE_NAME,
+        filter_expression: '#page_count >= :value',
+        expression_attribute_names: {
+          '#page_count': 'pageCount'
+        },
+        expression_attribute_values: {
+          ':value': value
+        }
+      )
+    end
+    response.items
   end
 
-  def get_books_with_multi_thread(num_threads)
-    start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-
-    result = Parallel.map((0...num_threads), in_threads: num_threads) { |i|
-      __scan_with_segment(i, num_threads)
-    }.flatten
-
-    finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    puts('--------------------------------')
-    puts("Scan with #{num_threads} threads:")
-    puts(finish - start)
-    puts('--------------------------------')
-
-    return result
+  def books_with_multi_thread(num_threads)
+    benmark("Scan with #{num_threads} threads in: ") do
+      Parallel.map((0...num_threads), in_threads: num_threads) { |i| __scan_with_segment(i, num_threads) }.flatten
+    end
   end
+
+  private
 
   def __scan_with_segment(segment, total_segments)
     result = []
-    response = @@client.scan(
-      table_name: @@table_name,
+    response = @client.scan(
+      table_name: TABLE_NAME,
       segment: segment,
       total_segments: total_segments
     )
     result.push(*response.items)
 
-    while response.key?('last_evaluated_key') do
-      response = @@client.scan(
-        table_name: @@table_name,
+    while response.key?('last_evaluated_key')
+      response = @client.scan(
+        table_name: TABLE_NAME,
         segment: segment,
         total_segments: total_segments,
         exclusive_start_key: response.last_evaluated_key
@@ -130,6 +108,16 @@ class BookApi
       result.push(*response.items)
     end
 
-    return result
+    result
+  end
+
+  def benmark(description)
+    start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    response = yield
+    finish = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    puts('--------------------------------')
+    puts(description)
+    puts(finish - start)
+    response
   end
 end
