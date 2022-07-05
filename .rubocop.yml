@@ -1,0 +1,16 @@
+AllCops:
+  NewCops: enable
+  Exclude:
+    - "node_modules/**/*"
+    - "tmp/**/*"
+    - "vendor/**/*"
+    - ".git/**/*"
+    - "db/**/*"
+    - bin/**/*
+
+Metrics/MethodLength:
+  CountComments: false
+  Max: 20
+
+Naming/MethodParameterName:
+  MinNameLength: 1
