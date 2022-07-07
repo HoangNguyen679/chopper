@@ -86,6 +86,30 @@ class BookApi
     end
   end
 
+  # batch get item
+  # start
+  # max 100 items
+  # retrieve items in paralel
+  # no order
+
+  def books_with_batch_get_item()
+    response = benmark('Batch get item in:') do
+      @client.batch_get_item({
+                                          request_items: {
+                                            TABLE_NAME => {
+                                              keys: [
+                                                {
+                                                  'isbn' => '1933988673',
+                                                  'title' => 'Unlocking Android'
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        })
+    end
+    response.responses
+  end
+
   private
 
   def __scan_with_segment(segment, total_segments)

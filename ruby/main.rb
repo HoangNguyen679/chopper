@@ -19,3 +19,5 @@ book_api.books_with_page_is_larger_than(100)
 book_api.books_with_multi_thread(4)
 
 book_api.books_with_multi_thread(10)
+
+book_api.books_with_batch_get_item
