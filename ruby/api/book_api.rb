@@ -95,17 +95,17 @@ class BookApi
   def books_with_batch_get_item()
     response = benmark('Batch get item in:') do
       @client.batch_get_item({
-                                          request_items: {
-                                            TABLE_NAME => {
-                                              keys: [
-                                                {
-                                                  'isbn' => '1933988673',
-                                                  'title' => 'Unlocking Android'
-                                                }
-                                              ]
-                                            }
-                                          }
-                                        })
+                               request_items: {
+                                 TABLE_NAME => {
+                                   keys: [
+                                     {
+                                       'isbn' => '1933988673',
+                                       'title' => 'Unlocking Android'
+                                     }
+                                   ]
+                                 }
+                               }
+                             })
     end
     response.responses
   end
