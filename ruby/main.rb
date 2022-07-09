@@ -21,3 +21,5 @@ book_api.books_with_multi_thread(4)
 book_api.books_with_multi_thread(10)
 
 book_api.books_with_batch_get_item
+
+book_api.book('1933988673', 'Unlocking Android')

@@ -110,6 +110,23 @@ class BookApi
     response.responses
   end
 
+  # get item
+  #
+  #
+
+  def book(isbn, title)
+    response = benmark('Get item in: ') do
+      @client.get_item({
+                         table_name: TABLE_NAME,
+                         key: {
+                           'isbn' => isbn,
+                           'title' => title
+                         }
+                       })
+    end
+    response.item
+  end
+
   private
 
   def __scan_with_segment(segment, total_segments)
