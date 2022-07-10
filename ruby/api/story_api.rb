@@ -3,8 +3,8 @@
 require "#{File.dirname(__FILE__)}/../lib/dynamodb"
 
 # Service to scan all books table
-class BookApi
-  TABLE_NAME = 'books'
+class StoryApi
+  TABLE_NAME = 'stories'
 
   def initialize
     @client = CustomDynamoDB.client

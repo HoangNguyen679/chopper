@@ -1,0 +1,55 @@
+[
+    {
+        "id": "1",
+        "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ultricies ex sit amet libero consectetur, nec vestibulum urna euismod. Suspendisse pellentesque, ligula ut fringilla tincidunt, arcu nunc malesuada nunc, et rhoncus lorem neque a eros. Sed sed condimentum velit. Interdum et malesuada fames ac ante ipsum primis in faucibus. Etiam congue pharetra enim, id dapibus ex malesuada at. Praesent auctor purus purus, id rutrum metus lacinia sollicitudin. Etiam eu tincidunt est. In vestibulum sodales iaculis. Duis ullamcorper ac orci sit amet vestibulum. Donec at enim ut turpis fermentum convallis in in enim. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed pellentesque id turpis a elementum.",
+        "reaction": {
+            "like": 100,
+            "heart": 99,
+            "smile": 88,
+            "cry": 86,
+            "angry": 10
+        },
+        "author": {
+            "id": "1",
+            "name": "Peter",
+            "avatarUrl": "https://xxx.xxx"
+        },
+        "createdAt": "2022-08-08T10:00:00",
+        "updatedAt": "2022-08-08T10:00:00",
+        "comments": [
+            {
+                "id": "1",
+                "content": "Praesent tempus leo eu metus euismod, et laoreet tellus eleifend. Integer tempor arcu non felis tincidunt pellentesque. Donec non consequat mauris, ac porttitor sapien. Suspendisse vitae orci porttitor, tincidunt lorem volutpat, dictum orci. Nulla bibendum vulputate mauris eget laoreet. Donec et enim egestas sapien sollicitudin bibendum. Donec volutpat, dui at tincidunt semper, nulla mauris laoreet erat, sit amet dictum risus neque vitae orci. Pellentesque lacus lorem, euismod vitae felis quis, elementum mattis enim.",
+                "author": {
+                    "id": "2",
+                    "name": "Adam",
+                    "avatarUrl": "https://xxx.xxx"
+                },
+                "createdAt": "2022-08-08T12:00:00",
+                "updatedAt": "2022-08-08T12:00:00"
+            },
+            {
+                "id": "2",
+                "content": "Praesent tempus leo eu metus euismod, et laoreet tellus eleifend. Integer tempor arcu non felis tincidunt pellentesque. Donec non consequat mauris, ac porttitor sapien. Suspendisse vitae orci porttitor, tincidunt lorem volutpat, dictum orci. Nulla bibendum vulputate mauris eget laoreet. Donec et enim egestas sapien sollicitudin bibendum. Donec volutpat, dui at tincidunt semper, nulla mauris laoreet erat, sit amet dictum risus neque vitae orci. Pellentesque lacus lorem, euismod vitae felis quis, elementum mattis enim.",
+                "author": {
+                    "id": "3",
+                    "name": "Lena",
+                    "avatarUrl": "https://xxx.xxx"
+                },
+                "createdAt": "2022-08-08T14:00:00",
+                "updatedAt": "2022-08-08T14:00:00"
+            },
+            {
+                "id": "3",
+                "content": "Praesent tempus leo eu metus euismod, et laoreet tellus eleifend. Integer tempor arcu non felis tincidunt pellentesque. Donec non consequat mauris, ac porttitor sapien. Suspendisse vitae orci porttitor, tincidunt lorem volutpat, dictum orci. Nulla bibendum vulputate mauris eget laoreet. Donec et enim egestas sapien sollicitudin bibendum. Donec volutpat, dui at tincidunt semper, nulla mauris laoreet erat, sit amet dictum risus neque vitae orci. Pellentesque lacus lorem, euismod vitae felis quis, elementum mattis enim.",
+                "author": {
+                    "id": "1",
+                    "name": "Peter",
+                    "avatarUrl": "https://xxx.xxx"
+                },
+                "createdAt": "2022-08-08T16:00:00",
+                "updatedAt": "2022-08-08T16:00:00"
+            }
+        ]
+    }
+]
