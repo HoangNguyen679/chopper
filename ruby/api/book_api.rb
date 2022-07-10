@@ -99,8 +99,7 @@ class BookApi
                                  TABLE_NAME => {
                                    keys: [
                                      {
-                                       'isbn' => '1933988673',
-                                       'title' => 'Unlocking Android'
+                                       'isbn' => '1933988673'
                                      }
                                    ]
                                  }
@@ -110,21 +109,42 @@ class BookApi
     response.responses
   end
 
+  # describe table
+  #
+  #
+
+  def describe_books_table()
+    @client.describe_table({
+                             table_name: TABLE_NAME
+                           }).to_h
+  end
+
   # get item
   #
   #
 
-  def book(isbn, title)
+  def book(isbn)
     response = benmark('Get item in: ') do
       @client.get_item({
                          table_name: TABLE_NAME,
                          key: {
-                           'isbn' => isbn,
-                           'title' => title
+                           'isbn' => isbn
                          }
                        })
     end
     response.item
+  end
+
+  # query
+  # results are always sorted by sort key value
+  # Number -> numeric
+  # otherwise -> utf-8
+  # default is ascending, to reverse the order, set ScanIndexForward -> false
+
+  def books_by_part_of_title(search_title)
+    benmark('Get bbooks by part of title in: ') do
+      __query_with_title(search_title)
+    end
   end
 
   private
@@ -151,6 +171,40 @@ class BookApi
 
     result
   end
+
+  # rubocop:disable Metrics/MethodLength
+  def __query_with_title(search_title)
+    result = []
+    response = @client.query({
+                               table_name: TABLE_NAME,
+                               key_condition_expression: 'isbn = :isbn',
+                               filter_expression: 'contains(title, :search_title)',
+                               expression_attribute_values: {
+                                 ':isbn' => '1933988673',
+                                 ':search_title' => search_title
+                               },
+                               projection_expression: 'title, isbn, shortDescription'
+                             })
+    result.push(*response.items)
+
+    while response.key?('last_evaluated_key')
+      response = @client.query({
+                                 table_name: TABLE_NAME,
+                                 key_condition_expression: 'isbn = :isbn',
+                                 filter_expression: 'contains(title, :search_title)',
+                                 expression_attribute_values: {
+                                   ':isbn' => '1933988673',
+                                   ':search_title' => search_title
+                                 },
+                                 projection_expression: 'title, isbn, shortDescription',
+                                 exclusive_start_key: res.last_evaluated_key
+                               })
+      result.push(*response.items)
+    end
+
+    result
+  end
+  # rubocop:enable Metrics/MethodLength
 
   def benmark(description)
     start = Process.clock_gettime(Process::CLOCK_MONOTONIC)

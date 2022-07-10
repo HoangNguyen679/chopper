@@ -2,6 +2,8 @@ require './ruby/api/book_api'
 
 book_api = BookApi.new
 
+pp book_api.describe_books_table
+
 book_api.books
 
 book_api.books_consistent_read
@@ -22,4 +24,6 @@ book_api.books_with_multi_thread(10)
 
 book_api.books_with_batch_get_item
 
-book_api.book('1933988673', 'Unlocking Android')
+book_api.book('1933988673')
+
+book_api.books_by_part_of_title('Android')
